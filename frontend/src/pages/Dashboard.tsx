@@ -77,7 +77,7 @@ export function Dashboard() {
               {!status ? (
                 <div className="flex items-center space-x-3 py-1">
                   <Spinner size="sm" />
-                  <Skeleton className="h-4 w-[200px] max-w-full" />
+                  <Skeleton className="h-4 w-50 max-w-full" />
                 </div>
               ) : (
                 <div className="flex flex-col space-y-4">
@@ -121,7 +121,7 @@ export function Dashboard() {
                     <DialogTrigger asChild>
                       <Button variant="outline" type="button">Advanced...</Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-106.25">
                       <DialogHeader>
                         <DialogTitle>Advanced Settings</DialogTitle>
                         <DialogDescription>

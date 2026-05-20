@@ -101,7 +101,7 @@ export function Playground() {
               {[1, 2, 3].map((skeleton) => (
                 <div key={skeleton} className="rounded-xl border border-border p-5 space-y-4 shadow-sm bg-card">
                   <Skeleton className="h-4 w-1/3" />
-                  <Skeleton className="h-[100px] w-full rounded-md" />
+                  <Skeleton className="h-25 w-full rounded-md" />
                   <Skeleton className="h-4 w-2/3" />
                 </div>
               ))}
@@ -112,7 +112,7 @@ export function Playground() {
               {data.map((item) => (
                 <div key={item} className="rounded-xl border border-border p-5 space-y-4 shadow-sm bg-card animate-in zoom-in-95 duration-300">
                   <h3 className="font-semibold text-foreground">Fetched Layout {item}</h3>
-                  <div className="h-[100px] w-full rounded-md bg-secondary/50 flex items-center justify-center text-muted-foreground">
+                  <div className="h-25 w-full rounded-md bg-secondary/50 flex items-center justify-center text-muted-foreground">
                     Real Content Image
                   </div>
                   <p className="text-sm text-muted-foreground">Data successfully fetched from server.</p>

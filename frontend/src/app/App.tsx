@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 import { RootLayout } from "@/layouts/RootLayout";
 import { Toaster } from "@/components/ui/Toaster";
+import logo from "@/assets/CCM_logo.png";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -46,6 +47,11 @@ function ClerkWithRoutes() {
       publishableKey={PUBLISHABLE_KEY}
       routerPush={(to: string) => navigate(to)}
       routerReplace={(to: string) => navigate(to, { replace: true })}
+      appearance={{
+        layout: {
+          logoImageUrl: logo
+        }
+      }}
     >
       <Routes>
         <Route element={<RootLayout />}>
