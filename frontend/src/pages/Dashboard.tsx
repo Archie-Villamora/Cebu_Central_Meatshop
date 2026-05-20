@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
 import { Info, Users, Save } from "lucide-react";
-import { apiClient } from "../services/api/axios";
-import { FadeIn } from "../components/ui/FadeIn";
-import { toast } from "../components/ui/Toaster";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "../components/ui/Card";
-import { Skeleton } from "../components/ui/Skeleton";
-import { Badge } from "../components/ui/Badge";
-import { Label } from "../components/ui/Label";
-import { Input } from "../components/ui/Input";
-import { Checkbox } from "../components/ui/Checkbox";
-import { Button } from "../components/ui/Button";
-import { Alert, AlertDescription, AlertTitle } from "../components/ui/Alert";
-import { EmptyState } from "../components/ui/EmptyState";
-import { Spinner } from "../components/ui/Spinner";
+import { useHealthCheck } from "@/hooks/useHealth";
+import { useUpdateAccount } from "@/hooks/useAccount";
+import { FadeIn } from "@/components/ui/FadeIn";
+import { toast } from "@/components/ui/Toaster";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Label } from "@/components/ui/Label";
+import { Input } from "@/components/ui/Input";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/Alert";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Spinner } from "@/components/ui/Spinner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../components/ui/Dialog";
+} from "@/components/ui/Dialog";
 
 const accountFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -33,8 +32,8 @@ const accountFormSchema = z.object({
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 export function Dashboard() {
-  const [status, setStatus] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const { data: healthData, isLoading: isHealthLoading, isError } = useHealthCheck();
+  const { mutateAsync: saveAccount, isPending: isSaving } = useUpdateAccount();
 
   const {
     register,
@@ -47,37 +46,15 @@ export function Dashboard() {
     },
   });
 
-  useEffect(() => {
-    apiClient.get("/health")
-      .then(res => setStatus(`Backend is online: ${res.data.message}`))
-      .catch(err => setStatus(`Backend offline or unreachable. ${err.message}`));
-  }, []);
-
-  const isOnline = status?.includes('online');
+  const isOnline = !isError && healthData;
+  const status = isHealthLoading ? "Checking..." : (healthData?.message ? `Backend is online: ${healthData.message}` : "Backend offline or unreachable.");
 
   const onSubmit = async (data: AccountFormValues) => {
-    setIsSaving(true);
-    
-    // Create a real promise for the toaster to attach to
-    const mutationPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Simulate network
-        console.log("Saved account data:", data);
-        resolve(data);
-      }, 1500);
-    });
-
-    toast.promise(mutationPromise, {
+    toast.promise(saveAccount(data), {
       loading: "Saving account settings...",
       success: "Settings saved successfully!",
       error: "Failed to save settings.",
     });
-
-    try {
-      await mutationPromise;
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   return (
@@ -178,7 +155,7 @@ export function Dashboard() {
         </FadeIn>
       </div>
 
-      <FadeIn delay="450" duration="700">
+      <FadeIn delay="500" duration="700">
         <Card>
           <CardHeader>
             <CardTitle>Recent Users</CardTitle>

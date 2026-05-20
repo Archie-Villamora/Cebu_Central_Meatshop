@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { toast } from "../components/ui/Toaster";
-import { Button } from "../components/ui/Button";
-import { Spinner } from "../components/ui/Spinner";
-import { Skeleton } from "../components/ui/Skeleton";
-import { Card } from "../components/ui/Card";
+import { useState } from "react";
+import { toast } from "@/components/ui/Toaster";
+import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export function Playground() {
   const [isSubmitting, setIsSubmitting] = useState(false);

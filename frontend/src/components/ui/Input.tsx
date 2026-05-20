@@ -1,6 +1,6 @@
 import React, { useId } from "react"
 import { AlertCircle, Check, Loader2 } from "lucide-react"
-import { cn } from "../../lib/utils"
+import { cn } from "@/lib/utils"
 import { Label } from "./Label"
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {

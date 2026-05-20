@@ -1,24 +1,27 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Toaster as Sonner, toast as sonnerToast } from "sonner"
 import { Info, AlertTriangle, XCircle, CheckCircle2 } from "lucide-react"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   return (
     <>
       <style>
         {`
-          /* Rule 1: Mobile Override to top-center (safe-area aware to prevent notch cropping) */
+          /* Mobile Override below navbar (safe-area aware to prevent notch cropping) */
           @media (max-width: 640px) {
             [data-sonner-toaster] {
-              position: fixed !important;
-              top: max(16px, env(safe-area-inset-top)) !important;
-              bottom: auto !important;
-              left: 50% !important;
-              right: auto !important;
-              transform: translateX(-50%) !important;
-              width: calc(100% - 32px) !important;
+              top: calc(72px + max(8px, env(safe-area-inset-top))) !important;
               z-index: 9999 !important;
             }
           }
@@ -33,10 +36,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
       </style>
       <Sonner
         className="toaster group"
-        position="bottom-right"
+        position={isMobile ? "top-center" : "bottom-right"}
         visibleToasts={3}
         closeButton
-        pauseWhenPageIsHidden
         toastOptions={{
           classNames: {
             toast:

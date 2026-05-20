@@ -1,7 +1,8 @@
 import React, { forwardRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import { Spinner } from "./Spinner";
+import { Link } from "react-router-dom";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden text-ellipsis md:whitespace-nowrap max-w-full text-center leading-tight whitespace-normal break-words",
@@ -36,14 +37,28 @@ export interface ButtonProps
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, href, isLoading, children, disabled, ...props }, ref) => {
     if (href) {
+      const isExternal = href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:");
+      if (isExternal) {
+        return (
+          <a
+            href={href}
+            className={cn(buttonVariants({ variant, size, className }))}
+            target="_blank"
+            rel="noopener noreferrer"
+            {...(props as any)}
+          >
+            {children}
+          </a>
+        );
+      }
       return (
-        <a
-          href={href}
+        <Link
+          to={href}
           className={cn(buttonVariants({ variant, size, className }))}
           {...(props as any)}
         >
           {children}
-        </a>
+        </Link>
       );
     }
     return (
@@ -59,5 +74,4 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
-Button.displayName = "Button";
 Button.displayName = "Button";

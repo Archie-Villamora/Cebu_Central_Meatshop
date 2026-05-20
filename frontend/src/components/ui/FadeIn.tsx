@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 interface FadeInProps extends React.HTMLAttributes<HTMLDivElement> {
   delay?: "none" | "150" | "300" | "500" | "1000";

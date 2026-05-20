@@ -1,19 +1,21 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Home, Settings, Menu, UserCircle, Beaker } from "lucide-react";
+import { LayoutDashboard, Home as HomeIcon, Settings, Menu, Beaker } from "lucide-react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../components/ui/DropdownMenu";
+} from "@/components/ui/DropdownMenu";
 
 export function RootLayout() {
   const location = useLocation();
 
   const navItems = [
-    { name: "Home", href: "/", icon: Home },
+    { name: "Home", href: "/", icon: HomeIcon },
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Playground", href: "/playground", icon: Beaker },
     { name: "Settings", href: "/settings", icon: Settings },
@@ -54,7 +56,7 @@ export function RootLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto w-full relative">
         {/* Mobile Header & Desktop Topnav */}
         <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b bg-background/95 backdrop-blur px-4 md:px-6 justify-between md:justify-end">
           <div className="flex items-center md:hidden gap-3">
@@ -87,22 +89,16 @@ export function RootLayout() {
           </div>
           
           <div className="flex items-center gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="focus:outline-none">
-                <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center border hover:border-border transition-colors">
-                  <UserCircle className="h-5 w-5 text-muted-foreground" />
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">Log out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
           </div>
         </header>
 

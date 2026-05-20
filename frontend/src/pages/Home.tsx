@@ -1,5 +1,5 @@
-     import { Button } from "../components/ui/Button";
-import { FadeIn } from "../components/ui/FadeIn";
+import { Button } from "@/components/ui/Button";
+import { FadeIn } from "@/components/ui/FadeIn";
 
 export function Home() {
   return (
