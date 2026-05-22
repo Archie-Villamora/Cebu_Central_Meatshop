@@ -1,25 +1,28 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { LayoutDashboard, Home as HomeIcon, Settings, Menu, Beaker } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import logo from "@/assets/CCM_logo.png";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/Sheet";
+import { Footer } from "@/components/layout/Footer";
 
 export function RootLayout() {
   const location = useLocation();
+  const { user } = useUser();
 
   const navItems = [
     { name: "Home", href: "/", icon: HomeIcon },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Playground", href: "/playground", icon: Beaker },
-    { name: "Settings", href: "/settings", icon: Settings },
+    { name: "Shop", href: "/shop", icon: LayoutDashboard },
+    { name: "Bundles", href: "/bundles", icon: Beaker },
+    { name: "Subscription Club", href: "/subscription", icon: Settings },
+    { name: "Customer Hub", href: "/account", icon: Settings },
   ];
 
   return (
@@ -33,25 +36,83 @@ export function RootLayout() {
           <div className="flex items-center gap-3 xl:gap-8">
             {/* Mobile Hamburger Menu */}
             <div className="md:hidden">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+              <Sheet>
+                <SheetTrigger asChild>
                   <button className="flex items-center justify-center h-10 w-10 rounded-md border border-border bg-background hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <Menu className="h-6 w-6" />
                   </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56">
-                  <DropdownMenuLabel>Navigation</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {navItems.map((item) => (
-                    <DropdownMenuItem key={item.name} asChild>
-                      <Link to={item.href} className="w-full flex items-center cursor-pointer">
-                        <item.icon className="mr-2 h-4 w-4" />
-                        {item.name}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-64 p-0 flex flex-col overflow-visible">
+                  {/* Middle close strip hanging outside */}
+                  <div className="absolute -right-8 top-1/2 -translate-y-1/2">
+                    <SheetClose asChild>
+                      <button className="flex flex-col items-center justify-center bg-background hover:bg-muted text-xs font-semibold uppercase tracking-widest text-muted-foreground w-8 py-10 rounded-r-xl transition-all border border-l-0 border-border focus:outline-none shadow-md shadow-black/5">
+                        <span style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                          Close
+                        </span>
+                      </button>
+                    </SheetClose>
+                  </div>
+
+                  {/* Edge-to-edge Header */}
+                  <SheetHeader className="bg-white border-b border-border p-6 pt-10 flex flex-col items-center justify-center shrink-0">
+                    <div className="h-20 w-20 flex items-center justify-center p-2 mb-3">
+                      <img src={logo} alt="Cebu Central Meatshop Logo" className="h-full w-full object-contain" />
+                    </div>
+                    <SheetTitle className="text-foreground font-display font-bold text-center">
+                      Cebu Central Meatshop
+                    </SheetTitle>
+                  </SheetHeader>
+                  
+                  {/* Navigation Links with Dividers */}
+                  <div className="flex flex-col flex-1 overflow-y-auto w-full px-4 py-6">
+                    <div className="flex flex-col divide-y divide-border">
+                      {navItems.map((item) => {
+                        const isActive = location.pathname === item.href || (location.pathname === '/' && item.href === '/');
+                        return (
+                          <SheetTrigger asChild key={item.name}>
+                            <Link 
+                              to={item.href} 
+                              className={`relative flex items-center gap-3 px-3 py-4 text-lg font-medium transition-colors ${
+                                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                              }`}
+                            >
+                              <item.icon className="h-5 w-5 z-10" />
+                              <span className="z-10">{item.name}</span>
+                              {isActive && (
+                                <motion.div
+                                  layoutId="activeMobileTabIndicator"
+                                  className="absolute inset-x-0 inset-y-1 bg-primary/10 rounded-md"
+                                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                />
+                              )}
+                            </Link>
+                          </SheetTrigger>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Auth / Profile Area at Bottom */}
+                  <div className="mt-auto border-t border-border bg-muted/10 p-4 shrink-0">
+                    <SignedIn>
+                      <div className="flex items-center gap-3 w-full px-3 py-2">
+                        <UserButton afterSignOutUrl="/" />
+                        <span className="text-sm font-medium text-foreground truncate flex-1">
+                          {user?.fullName || "User Account"}
+                        </span>
+                      </div>
+                    </SignedIn>
+                    <SignedOut>
+                      <SignInButton mode="modal">
+                        <button className="w-full flex justify-center items-center py-2.5 rounded-md bg-primary text-primary-foreground font-medium text-sm transition-colors hover:bg-primary/90">
+                          Sign In
+                        </button>
+                      </SignInButton>
+                    </SignedOut>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
 
             {/* Logo */}
@@ -59,7 +120,7 @@ export function RootLayout() {
               <div className="h-16 w-16 md:h-20 md:w-20 flex items-center justify-center shrink-0">
                 <img src={logo} alt="Cebu Central Meatshop Logo" className="h-full w-full object-contain" />
               </div>
-              <span className="font-display font-bold text-lg md:text-xl tracking-tight leading-tight hidden sm:block max-w-[150px] md:max-w-none">
+              <span className="font-display font-bold text-lg md:text-xl tracking-tight leading-tight hidden sm:block max-w-37.5 md:max-w-none">
                 Cebu Central <br className="hidden md:block" /> Meatshop
               </span>
             </Link>
@@ -73,18 +134,25 @@ export function RootLayout() {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`text-[15px] font-semibold transition-colors hover:text-primary ${
+                  className={`relative py-1 text-[15px] font-semibold transition-colors hover:text-primary ${
                     isActive ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   {item.name}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute left-0 right-0 -bottom-2 h-[2.5px] bg-primary rounded-full"
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
+                  )}
                 </Link>
               );
             })}
           </nav>
           
-          {/* Right section: Auth & Actions */}
-          <div className="flex items-center justify-end shrink-0 gap-4">
+          {/* Right section: Auth & Actions (Desktop only) */}
+          <div className="hidden md:flex items-center justify-end shrink-0 gap-4">
             {/* Search/Cart placeholders could go here */}
             
             <SignedIn>
@@ -102,10 +170,11 @@ export function RootLayout() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full relative h-[calc(100vh-6rem)] overflow-y-auto">
-        <div className="container mx-auto p-4 md:p-8">
+      <main className="flex-1 w-full flex flex-col">
+        <div className="flex-1">
           <Outlet />
         </div>
+        <Footer />
       </main>
     </div>
   );

@@ -14,8 +14,25 @@ if (!PUBLISHABLE_KEY) {
 }
 
 const Home = lazy(() => import("@/pages/Home").then((module) => ({ default: module.Home })));
-const Dashboard = lazy(() => import("@/pages/Dashboard").then((module) => ({ default: module.Dashboard })));
-const Playground = lazy(() => import("@/pages/Playground").then((module) => ({ default: module.Playground })));
+const Shop = lazy(() => import("@/pages/shop/Shop").then((module) => ({ default: module.Shop })));
+const Category = lazy(() => import("@/pages/shop/Category").then((module) => ({ default: module.Category })));
+const Bundles = lazy(() => import("@/pages/shop/Bundles").then((module) => ({ default: module.Bundles })));
+const ProductDetail = lazy(() => import("@/pages/shop/ProductDetail").then((module) => ({ default: module.ProductDetail })));
+
+const OurStory = lazy(() => import("@/pages/about/OurStory").then((module) => ({ default: module.OurStory })));
+const Sourcing = lazy(() => import("@/pages/about/Sourcing").then((module) => ({ default: module.Sourcing })));
+
+const Wholesale = lazy(() => import("@/pages/services/Wholesale").then((module) => ({ default: module.Wholesale })));
+const Subscription = lazy(() => import("@/pages/services/Subscription").then((module) => ({ default: module.Subscription })));
+
+const Shipping = lazy(() => import("@/pages/support/Shipping").then((module) => ({ default: module.Shipping })));
+const Guarantee = lazy(() => import("@/pages/support/Guarantee").then((module) => ({ default: module.Guarantee })));
+const FAQ = lazy(() => import("@/pages/support/FAQ").then((module) => ({ default: module.FAQ })));
+
+const Terms = lazy(() => import("@/pages/legal/Terms").then((module) => ({ default: module.Terms })));
+const Privacy = lazy(() => import("@/pages/legal/Privacy").then((module) => ({ default: module.Privacy })));
+
+const CustomerHub = lazy(() => import("@/pages/account/CustomerHub").then((module) => ({ default: module.CustomerHub })));
 
 // A full-page centering wrapper for the loader
 const PageLoader = () => (
@@ -55,22 +72,29 @@ function ClerkWithRoutes() {
     >
       <Routes>
         <Route element={<RootLayout />}>
-          <Route path="/" element={
-            <Suspense fallback={<PageLoader />}>
-              <Home />
-            </Suspense>
-          } />
-          <Route path="/dashboard" element={
+          <Route path="/" element={<Suspense fallback={<PageLoader />}><Home /></Suspense>} />
+          
+          <Route path="/shop" element={<Suspense fallback={<PageLoader />}><Shop /></Suspense>} />
+          <Route path="/shop/:category" element={<Suspense fallback={<PageLoader />}><Category /></Suspense>} />
+          <Route path="/shop/product/:id" element={<Suspense fallback={<PageLoader />}><ProductDetail /></Suspense>} />
+          <Route path="/bundles" element={<Suspense fallback={<PageLoader />}><Bundles /></Suspense>} />
+          
+          <Route path="/our-story" element={<Suspense fallback={<PageLoader />}><OurStory /></Suspense>} />
+          <Route path="/sourcing" element={<Suspense fallback={<PageLoader />}><Sourcing /></Suspense>} />
+          <Route path="/wholesale" element={<Suspense fallback={<PageLoader />}><Wholesale /></Suspense>} />
+          <Route path="/subscription" element={<Suspense fallback={<PageLoader />}><Subscription /></Suspense>} />
+          
+          <Route path="/shipping" element={<Suspense fallback={<PageLoader />}><Shipping /></Suspense>} />
+          <Route path="/guarantee" element={<Suspense fallback={<PageLoader />}><Guarantee /></Suspense>} />
+          <Route path="/faq" element={<Suspense fallback={<PageLoader />}><FAQ /></Suspense>} />
+          
+          <Route path="/terms" element={<Suspense fallback={<PageLoader />}><Terms /></Suspense>} />
+          <Route path="/privacy" element={<Suspense fallback={<PageLoader />}><Privacy /></Suspense>} />
+          
+          <Route path="/account" element={
             <ProtectedRoute>
               <Suspense fallback={<PageLoader />}>
-                <Dashboard />
-              </Suspense>
-            </ProtectedRoute>
-          } />
-          <Route path="/playground" element={
-            <ProtectedRoute>
-              <Suspense fallback={<PageLoader />}>
-                <Playground />
+                <CustomerHub />
               </Suspense>
             </ProtectedRoute>
           } />

@@ -1,0 +1,1 @@
+export const Subscription = () => <div className='container py-10'><h1 className='text-3xl font-display font-bold'>Subscription Page</h1><p className='text-muted-foreground mt-4'>Placeholder for Subscription component.</p></div>;

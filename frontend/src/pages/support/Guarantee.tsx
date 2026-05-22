@@ -1,0 +1,1 @@
+export const Guarantee = () => <div className='container py-10'><h1 className='text-3xl font-display font-bold'>Guarantee Page</h1><p className='text-muted-foreground mt-4'>Placeholder for Guarantee component.</p></div>;

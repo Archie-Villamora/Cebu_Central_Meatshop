@@ -1,0 +1,1 @@
+export const FAQ = () => <div className='container py-10'><h1 className='text-3xl font-display font-bold'>FAQ Page</h1><p className='text-muted-foreground mt-4'>Placeholder for FAQ component.</p></div>;

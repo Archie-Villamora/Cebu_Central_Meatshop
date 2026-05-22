@@ -1,0 +1,1 @@
+export const Terms = () => <div className='container py-10'><h1 className='text-3xl font-display font-bold'>Terms Page</h1><p className='text-muted-foreground mt-4'>Placeholder for Terms component.</p></div>;

@@ -1,0 +1,1 @@
+export const Wholesale = () => <div className='container py-10'><h1 className='text-3xl font-display font-bold'>Wholesale Page</h1><p className='text-muted-foreground mt-4'>Placeholder for Wholesale component.</p></div>;
