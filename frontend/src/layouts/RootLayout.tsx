@@ -1,7 +1,8 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LayoutDashboard, Home as HomeIcon, Settings, Menu, Beaker } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/clerk-react";
+import { UserDropdown } from "@/components/layout/UserDropdown";
 import logo from "@/assets/CCM_logo.png";
 import {
   Sheet,
@@ -43,6 +44,7 @@ export function RootLayout() {
                   </button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-64 p-0 flex flex-col overflow-visible">
+                
                   {/* Middle close strip hanging outside */}
                   <div className="absolute -right-8 top-1/2 -translate-y-1/2">
                     <SheetClose asChild>
@@ -97,7 +99,7 @@ export function RootLayout() {
                   <div className="mt-auto border-t border-border bg-muted/10 p-4 shrink-0">
                     <SignedIn>
                       <div className="flex items-center gap-3 w-full px-3 py-2">
-                        <UserButton afterSignOutUrl="/" />
+                        <UserDropdown />
                         <span className="text-sm font-medium text-foreground truncate flex-1">
                           {user?.fullName || "User Account"}
                         </span>
@@ -156,7 +158,7 @@ export function RootLayout() {
             {/* Search/Cart placeholders could go here */}
             
             <SignedIn>
-              <UserButton afterSignOutUrl="/" />
+              <UserDropdown />
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal">
