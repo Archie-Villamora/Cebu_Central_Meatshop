@@ -36,7 +36,7 @@ export function UserDropdown() {
 
   if (!isLoaded) {
     return (
-      <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
+      <div className="h-11 w-11 rounded-full bg-muted animate-pulse" />
     );
   }
 
@@ -114,7 +114,7 @@ export function UserDropdown() {
       }
     }}>
       <DropdownMenuTrigger asChild>
-        <button className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted outline-none transition-all duration-300 hover:scale-105 hover:ring-2 hover:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
+        <button className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-muted outline-none transition-all duration-300 hover:scale-105 hover:ring-2 hover:ring-primary/20 focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">
           <img
             src={user.imageUrl}
             alt={user.fullName || "User profile"}
