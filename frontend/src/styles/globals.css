@@ -61,9 +61,16 @@
   * {
     @apply border-border;
   }
+  html, body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    overflow-x: hidden;
+  }
+  html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
+  }
   body {
     @apply bg-background text-foreground tracking-wide leading-relaxed font-sans;
-    overflow-y: scroll; /* Force scrollbar to prevent layout shifts */
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight text-foreground font-semibold;

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight, Scale, FileText } from "lucide-react";
@@ -25,6 +26,11 @@ export function MegaNav() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [hoveredTrigger, setHoveredTrigger] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   const hoveredTriggerRef = useRef<string | null>(null);
   const isHoveringDropdownRef = useRef<boolean>(false);
@@ -170,7 +176,7 @@ export function MegaNav() {
 
   return (
     <div 
-      className="relative flex items-center space-x-3 lg:space-x-5 h-full"
+      className="flex items-center space-x-3 lg:space-x-5 h-full"
       onMouseEnter={() => {
         if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
       }}
@@ -187,6 +193,7 @@ export function MegaNav() {
       {/* Navigation Triggers */}
       {navigationConfig.map((tab) => {
         const isOpen = activeTab === tab.id;
+        const isHovered = hoveredTrigger === tab.id;
         const isActiveRoute = tab.columns.some((col) =>
           col.links.some((l) => location.pathname === l.href)
         );
@@ -196,21 +203,20 @@ export function MegaNav() {
             key={tab.id}
             onMouseEnter={() => handleMouseEnter(tab.id)}
             onMouseLeave={() => handleMouseLeave(tab.id)}
-            className="h-full flex items-center relative"
+            className="h-full flex items-center"
           >
             <button
               className={`relative py-2 px-3 flex items-center gap-1.5 text-[14px] lg:text-[15px] font-bold tracking-wide transition-colors duration-200 cursor-pointer rounded-md select-none ${
                 isOpen || isActiveRoute ? "text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {/* Premium sliding background pill */}
-              {hoveredTrigger === tab.id && (
-                <motion.div
-                  layoutId="hoveredTabBackground"
-                  className="absolute inset-0 bg-muted/65 rounded-md -z-10"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
+              {/* Per-item background highlight — no layoutId to avoid layout shift */}
+              <span 
+                className={`absolute inset-0 rounded-md bg-muted/65 transition-opacity duration-200 ease-out -z-10 ${
+                  isHovered ? "opacity-100" : "opacity-0"
+                }`}
+                aria-hidden="true"
+              />
               
               {tab.title}
               <ChevronDown 
@@ -228,186 +234,195 @@ export function MegaNav() {
         );
       })}
 
-      {/* Mega Menus Dropdown Panel Wrapper */}
-      <AnimatePresence>
-        {activeTab && (
-          <motion.div
-            ref={dropdownRef}
-            initial={{ opacity: 0, y: 12, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            onMouseEnter={handleDropdownMouseEnter}
-            onMouseLeave={handleDropdownMouseLeave}
-            className={`absolute top-[calc(100%-8px)] left-1/2 -translate-x-1/2 z-50 bg-white/95 backdrop-blur-md border border-border shadow-xl rounded-xl p-7 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
-              activeTab === "shop" ? "w-[960px]" : "w-[640px]"
-            }`}
-          >
-            {/* Cross-fading absolute/relative panels for jitter-free resizing */}
-            <div className="relative w-full">
-              
-              {/* 1. Shop Mega Menu Panel */}
-              <div 
-                className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                  activeTab === "shop" 
-                    ? "opacity-100 translate-y-0 pointer-events-auto relative" 
-                    : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
-                }`}
+      {/* Mega Menus Dropdown Panel Wrapper (Portaled to document.body to prevent layout shifting) */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {activeTab && (
+            <div
+              className="fixed top-[88px] left-1/2 -translate-x-1/2 z-50 pointer-events-none max-w-[calc(100vw-2rem)]"
+              style={{ 
+                width: activeTab === "shop" ? "960px" : "640px", 
+                transition: "width 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+              }}
+            >
+              <motion.div
+                ref={dropdownRef}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
+                className="w-full bg-white/95 backdrop-blur-md border border-border shadow-xl rounded-xl p-7 overflow-hidden pointer-events-auto"
               >
-                <div className="grid grid-cols-12 gap-8 text-foreground">
-                  {shopGroup.columns.map((col, colIdx) => (
-                    <div key={colIdx} className="col-span-3 flex flex-col space-y-4">
-                      <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
-                        {col.title}
-                      </h3>
+              {/* Cross-fading absolute/relative panels for jitter-free resizing */}
+              <div className="relative w-full">
+                
+                {/* 1. Shop Mega Menu Panel */}
+                <div 
+                  className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    activeTab === "shop" 
+                      ? "opacity-100 translate-y-0 pointer-events-auto relative" 
+                      : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
+                  }`}
+                >
+                  <div className="grid grid-cols-12 gap-8 text-foreground">
+                    {shopGroup.columns.map((col, colIdx) => (
+                      <div key={colIdx} className="col-span-3 flex flex-col space-y-4">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
+                          {col.title}
+                        </h3>
+                        <div className="flex flex-col space-y-1">
+                          {col.links.map((link) => (
+                            <DropdownLink 
+                              key={link.name} 
+                              to={link.href} 
+                              icon={link.icon} 
+                              title={link.name} 
+                              desc={link.desc} 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Promotional Visual Card */}
+                    {shopGroup.promo && (
+                      <div className="col-span-3 bg-secondary rounded-lg overflow-hidden border border-border p-4 text-white flex flex-col justify-between relative group">
+                        <div className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-105 transition-transform duration-500 pointer-events-none" style={{ backgroundImage: `url('${shopGroup.promo.image}')` }} />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
+                        
+                        <div className="relative z-10 flex flex-col h-full justify-between">
+                          <div>
+                            <span className="inline-block px-2 py-0.5 bg-primary text-white text-[9px] font-extrabold uppercase tracking-wider rounded-sm mb-2 shadow-sm">
+                              {shopGroup.promo.tag}
+                            </span>
+                            <h4 className="text-base font-bold tracking-tight mb-1 leading-snug drop-shadow-md text-white">
+                              {shopGroup.promo.title}
+                            </h4>
+                            <p className="text-[11px] text-zinc-300 leading-relaxed line-clamp-3">
+                              {shopGroup.promo.desc}
+                            </p>
+                          </div>
+                          
+                          <Link 
+                            to={shopGroup.promo.href} 
+                            className="mt-4 flex items-center gap-1.5 text-xs font-bold text-primary group-hover:text-primary/90 transition-colors uppercase tracking-wider"
+                          >
+                            {shopGroup.promo.cta} <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 2. Services Dropdown Panel */}
+                <div 
+                  className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    activeTab === "services" 
+                      ? "opacity-100 translate-y-0 pointer-events-auto relative" 
+                      : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
+                  }`}
+                >
+                  <div className="flex flex-col space-y-4 text-foreground">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
+                      {servicesGroup.columns[0].title}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {servicesGroup.columns[0].links.map((link) => (
+                        <DropdownLink 
+                          key={link.name}
+                          to={link.href}
+                          icon={link.icon}
+                          title={link.name}
+                          desc={link.desc}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. About Us Dropdown Panel */}
+                <div 
+                  className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    activeTab === "about" 
+                      ? "opacity-100 translate-y-0 pointer-events-auto relative" 
+                      : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
+                  }`}
+                >
+                  <div className="flex flex-col space-y-4 text-foreground">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
+                      {aboutGroup.columns[0].title}
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      {aboutGroup.columns[0].links.map((link) => (
+                        <DropdownLink 
+                          key={link.name}
+                          to={link.href}
+                          icon={link.icon}
+                          title={link.name}
+                          desc={link.desc}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Support Dropdown Panel */}
+                <div 
+                  className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    activeTab === "support" 
+                      ? "opacity-100 translate-y-0 pointer-events-auto relative" 
+                      : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
+                  }`}
+                >
+                  <div className="flex flex-col space-y-4 text-foreground">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
+                      {supportGroup.columns[0].title}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col space-y-1">
-                        {col.links.map((link) => (
+                        {supportGroup.columns[0].links.slice(0, 2).map((link) => (
                           <DropdownLink 
-                            key={link.name} 
-                            to={link.href} 
-                            icon={link.icon} 
-                            title={link.name} 
-                            desc={link.desc} 
+                            key={link.name}
+                            to={link.href}
+                            icon={link.icon}
+                            title={link.name}
+                            desc={link.desc}
                           />
                         ))}
                       </div>
-                    </div>
-                  ))}
-
-                  {/* Promotional Visual Card */}
-                  {shopGroup.promo && (
-                    <div className="col-span-3 bg-secondary rounded-lg overflow-hidden border border-border p-4 text-white flex flex-col justify-between relative group">
-                      <div className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-105 transition-transform duration-500 pointer-events-none" style={{ backgroundImage: `url('${shopGroup.promo.image}')` }} />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent pointer-events-none" />
-                      
-                      <div className="relative z-10 flex flex-col h-full justify-between">
-                        <div>
-                          <span className="inline-block px-2 py-0.5 bg-primary text-white text-[9px] font-extrabold uppercase tracking-wider rounded-sm mb-2 shadow-sm">
-                            {shopGroup.promo.tag}
-                          </span>
-                          <h4 className="text-base font-bold tracking-tight mb-1 leading-snug drop-shadow-md text-white">
-                            {shopGroup.promo.title}
-                          </h4>
-                          <p className="text-[11px] text-zinc-300 leading-relaxed line-clamp-3">
-                            {shopGroup.promo.desc}
-                          </p>
+                      <div className="flex flex-col space-y-1">
+                        {supportGroup.columns[0].links.slice(2).map((link) => (
+                          <DropdownLink 
+                            key={link.name}
+                            to={link.href}
+                            icon={link.icon}
+                            title={link.name}
+                            desc={link.desc}
+                          />
+                        ))}
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border mt-1">
+                          <Link to="/terms" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+                            <Scale className="h-3 w-3" /> Terms of Service
+                          </Link>
+                          <Link to="/privacy" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
+                            <FileText className="h-3 w-3" /> Privacy Policy
+                          </Link>
                         </div>
-                        
-                        <Link 
-                          to={shopGroup.promo.href} 
-                          className="mt-4 flex items-center gap-1.5 text-xs font-bold text-primary group-hover:text-primary/90 transition-colors uppercase tracking-wider"
-                        >
-                          {shopGroup.promo.cta} <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* 2. Services Dropdown Panel */}
-              <div 
-                className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                  activeTab === "services" 
-                    ? "opacity-100 translate-y-0 pointer-events-auto relative" 
-                    : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
-                }`}
-              >
-                <div className="flex flex-col space-y-4 text-foreground">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
-                    {servicesGroup.columns[0].title}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    {servicesGroup.columns[0].links.map((link) => (
-                      <DropdownLink 
-                        key={link.name}
-                        to={link.href}
-                        icon={link.icon}
-                        title={link.name}
-                        desc={link.desc}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* 3. About Us Dropdown Panel */}
-              <div 
-                className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                  activeTab === "about" 
-                    ? "opacity-100 translate-y-0 pointer-events-auto relative" 
-                    : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
-                }`}
-              >
-                <div className="flex flex-col space-y-4 text-foreground">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
-                    {aboutGroup.columns[0].title}
-                  </h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    {aboutGroup.columns[0].links.map((link) => (
-                      <DropdownLink 
-                        key={link.name}
-                        to={link.href}
-                        icon={link.icon}
-                        title={link.name}
-                        desc={link.desc}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* 4. Support Dropdown Panel */}
-              <div 
-                className={`w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                  activeTab === "support" 
-                    ? "opacity-100 translate-y-0 pointer-events-auto relative" 
-                    : "opacity-0 -translate-y-2 pointer-events-none absolute inset-x-0 top-0"
-                }`}
-              >
-                <div className="flex flex-col space-y-4 text-foreground">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border pb-2">
-                    {supportGroup.columns[0].title}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col space-y-1">
-                      {supportGroup.columns[0].links.slice(0, 2).map((link) => (
-                        <DropdownLink 
-                          key={link.name}
-                          to={link.href}
-                          icon={link.icon}
-                          title={link.name}
-                          desc={link.desc}
-                        />
-                      ))}
-                    </div>
-                    <div className="flex flex-col space-y-1">
-                      {supportGroup.columns[0].links.slice(2).map((link) => (
-                        <DropdownLink 
-                          key={link.name}
-                          to={link.href}
-                          icon={link.icon}
-                          title={link.name}
-                          desc={link.desc}
-                        />
-                      ))}
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border mt-1">
-                        <Link to="/terms" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
-                          <Scale className="h-3 w-3" /> Terms of Service
-                        </Link>
-                        <Link to="/privacy" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1">
-                          <FileText className="h-3 w-3" /> Privacy Policy
-                        </Link>
                       </div>
                     </div>
                   </div>
                 </div>
+                
               </div>
-              
+            </motion.div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
