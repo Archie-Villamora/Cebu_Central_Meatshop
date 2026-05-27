@@ -99,7 +99,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     id: "about",
-    title: "About Us",
+    title: "About",
     icon: BookOpen,
     columns: [
       {

@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { ChevronRight, ArrowRight, ShieldCheck, Truck, Leaf, Award } from "lucide-react";
+import { PRODUCTS } from "@/config/products";
+import { useCart } from "@/context/CartContext";
 
 const HERO_SLIDES = [
   {
@@ -38,15 +40,14 @@ const CATEGORIES = [
   { name: "Pasture Lamb", image: "https://images.unsplash.com/photo-1602491453631-e2a5ad90a131?w=800&auto=format&fit=crop", link: "/shop/lamb" },
 ];
 
-const FEATURED_PRODUCTS = [
-  { id: 1, name: "Wagyu Ribeye Steak", price: "₱2,450", weight: "500g", image: "https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=800&auto=format&fit=crop" },
-  { id: 2, name: "Premium Pork Belly", price: "₱680", weight: "1kg", image: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=800&auto=format&fit=crop" },
-  { id: 3, name: "Organic Whole Chicken", price: "₱850", weight: "1.5kg", image: "https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=800&auto=format&fit=crop" },
-  { id: 4, name: "Grass-Fed Tomahawk", price: "₱4,200", weight: "1.2kg", image: "https://images.unsplash.com/photo-1594046243098-0fceea9d451e?w=800&auto=format&fit=crop" },
-];
-
 export function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { addToCart } = useCart();
+
+  const featuredProducts = useMemo(() => {
+    const ids = [1, 5, 9, 2];
+    return ids.map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean) as typeof PRODUCTS;
+  }, []);
 
   // Auto-advance hero carousel
   useEffect(() => {
@@ -58,7 +59,7 @@ export function Home() {
 
   return (
     <div className="w-full flex flex-col pb-20">
-      
+
       {/* 1. Hero Carousel (Edge to Edge) */}
       <section className="relative w-full h-[70vh] md:h-[85vh] bg-secondary overflow-hidden">
         <AnimatePresence initial={false}>
@@ -71,9 +72,9 @@ export function Home() {
             className="absolute inset-0 w-full h-full"
           >
             <div className="absolute inset-0 bg-black/40 z-10" />
-            <img 
-              src={HERO_SLIDES[currentSlide].image} 
-              alt="Meat background" 
+            <img
+              src={HERO_SLIDES[currentSlide].image}
+              alt="Meat background"
               className="w-full h-full object-cover object-center"
             />
           </motion.div>
@@ -86,7 +87,7 @@ export function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="max-w-2xl"
+              className="max-w-2xl ml-auto text-right flex flex-col items-end"
             >
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-extrabold tracking-tight mb-4 drop-shadow-lg text-white">
                 {HERO_SLIDES[currentSlide].title}
@@ -107,9 +108,8 @@ export function Home() {
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                idx === currentSlide ? "w-10 bg-primary" : "w-2 bg-white/50 hover:bg-white/80"
-              }`}
+              className={`h-2 rounded-full transition-all duration-300 ${idx === currentSlide ? "w-10 bg-primary" : "w-2 bg-white/50 hover:bg-white/80"
+                }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
@@ -151,9 +151,9 @@ export function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {CATEGORIES.map((cat, idx) => (
             <Link key={idx} to={cat.link} className="group relative rounded-xl overflow-hidden aspect-[4/5] block bg-muted">
-              <img 
-                src={cat.image} 
-                alt={cat.name} 
+              <img
+                src={cat.image}
+                alt={cat.name}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -177,26 +177,37 @@ export function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {FEATURED_PRODUCTS.map((product) => (
-              <div key={product.id} className="group bg-white rounded-xl border border-border overflow-hidden hover:shadow-lg hover:shadow-black/5 transition-all duration-300">
+            {featuredProducts.map((product) => (
+              <div key={product.id} className="group bg-white rounded-xl border border-border overflow-hidden hover:shadow-lg hover:shadow-black/5 transition-all duration-300 flex flex-col h-full">
                 <div className="relative aspect-square overflow-hidden bg-secondary">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
+                  <img
+                    src={product.image}
+                    alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3">
-                    <span className="bg-background text-foreground text-xs font-bold px-2.5 py-1 rounded-sm shadow-sm">
+                    <span className="bg-background text-foreground text-xs font-bold px-2.5 py-1 rounded-sm shadow-sm select-none">
                       {product.weight}
                     </span>
                   </div>
                 </div>
-                <div className="p-5 flex flex-col">
-                  <Link to={`/shop/product/${product.id}`} className="font-semibold text-lg hover:text-primary transition-colors line-clamp-1 mb-1">
+                <div className="p-5 flex flex-col flex-1">
+                  <Link to={`/shop/product/${product.id}`} className="font-semibold text-lg hover:text-primary transition-colors line-clamp-1 mb-1 leading-snug">
                     {product.name}
                   </Link>
-                  <p className="text-primary font-bold text-xl mb-4">{product.price}</p>
-                  <Button className="w-full font-semibold mt-auto" variant="outline">
+                  <p className="text-primary font-bold text-xl mb-4 font-sans">₱{product.price.toLocaleString()}</p>
+                  <Button 
+                    onClick={() => addToCart({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      weight: product.weight,
+                      image: product.image,
+                      type: "product"
+                    }, 1)}
+                    className="w-full font-semibold mt-auto cursor-pointer" 
+                    variant="outline"
+                  >
                     Quick Add
                   </Button>
                 </div>
@@ -210,9 +221,9 @@ export function Home() {
       <section className="container mx-auto px-4 py-20">
         <div className="relative rounded-2xl overflow-hidden bg-foreground text-background">
           <div className="absolute inset-0 opacity-40">
-            <img 
-              src="https://images.unsplash.com/photo-1557007727-448c973ea94e?auto=format&fit=crop&w=2000&q=80" 
-              alt="BBQ Banner" 
+            <img
+              src="https://images.unsplash.com/photo-1557007727-448c973ea94e?auto=format&fit=crop&w=2000&q=80"
+              alt="BBQ Banner"
               className="w-full h-full object-cover"
             />
           </div>

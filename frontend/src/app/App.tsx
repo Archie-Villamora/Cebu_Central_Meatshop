@@ -6,6 +6,7 @@ import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from "@clerk/cle
 import { RootLayout } from "@/layouts/RootLayout";
 import { Toaster } from "@/components/ui/Toaster";
 import logo from "@/assets/CCM_logo.png";
+import { CartProvider } from "@/context/CartContext";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -108,8 +109,10 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <ClerkWithRoutes />
-        <Toaster />
+        <CartProvider>
+          <ClerkWithRoutes />
+          <Toaster />
+        </CartProvider>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

@@ -17,8 +17,8 @@ app.get('/api/health', (req, res) => {
 
 // Protected Route Example
 app.get('/api/account', requireAuth(), (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     message: 'Authenticated endpoint reached',
     // @ts-ignore - The auth object is injected by Clerk
     userId: req.auth.userId

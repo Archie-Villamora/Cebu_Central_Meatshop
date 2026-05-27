@@ -184,6 +184,9 @@ graph LR
 
 ### 3.6 Design System & UI Components
 
+> [!NOTE]
+> For complete specifications, typography configurations, interactive micro-animations, layout responsiveness guidelines, and a detailed primitive API catalog, refer directly to the [Design System & UI Components.md](file:///c:/Users/User/Desktop/webdev/Cebu_Central_Meatshop/Design%20System%20&%20UI%20Components.md) document at the root of the project.
+
 #### Color System (`frontend/src/styles/globals.css`)
 
 Uses a **60-30-10 color rule** with HSL CSS variables:
