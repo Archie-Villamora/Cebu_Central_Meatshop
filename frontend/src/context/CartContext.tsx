@@ -8,7 +8,8 @@ export interface CartItem {
   weight: string;
   image: string;
   quantity: number;
-  type: "product" | "bundle";
+  type: "product" | "bundle" | "subscription";
+  frequency?: string;
 }
 
 interface CartContextType {

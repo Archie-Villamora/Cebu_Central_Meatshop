@@ -483,7 +483,7 @@ export function RootLayout() {
                       </button>
                     </div>
                     <p className="text-[11px] text-muted-foreground font-semibold mt-0.5">
-                      {item.weight} • {item.type === "bundle" ? "Bundle" : "Single Cut"}
+                      {item.weight} • {item.type === "subscription" ? `${item.frequency || "Monthly"} Subscription` : item.type === "bundle" ? "Bundle" : "Single Cut"}
                     </p>
                     <div className="flex justify-between items-center mt-auto pt-2">
                       <div className="flex items-center border border-border rounded bg-muted/30 overflow-hidden shrink-0">
