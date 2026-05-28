@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { ChevronRight, ArrowRight, ShieldCheck, Truck, Leaf, Award } from "lucide-react";
 import { PRODUCTS } from "@/config/products";
-import { useCart } from "@/context/CartContext";
+import { ProductCard } from "@/components/ui/ProductCard";
 
 const HERO_SLIDES = [
   {
@@ -42,7 +42,6 @@ const CATEGORIES = [
 
 export function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { addToCart } = useCart();
 
   const featuredProducts = useMemo(() => {
     const ids = [1, 5, 9, 2];
@@ -178,40 +177,7 @@ export function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
-              <div key={product.id} className="group bg-white rounded-xl border border-border overflow-hidden hover:shadow-lg hover:shadow-black/5 transition-all duration-300 flex flex-col h-full">
-                <div className="relative aspect-square overflow-hidden bg-secondary">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-background text-foreground text-xs font-bold px-2.5 py-1 rounded-sm shadow-sm select-none">
-                      {product.weight}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <Link to={`/shop/product/${product.id}`} className="font-semibold text-lg hover:text-primary transition-colors line-clamp-1 mb-1 leading-snug">
-                    {product.name}
-                  </Link>
-                  <p className="text-primary font-bold text-xl mb-4 font-sans">₱{product.price.toLocaleString()}</p>
-                  <Button 
-                    onClick={() => addToCart({
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
-                      weight: product.weight,
-                      image: product.image,
-                      type: "product"
-                    }, 1)}
-                    className="w-full font-semibold mt-auto cursor-pointer" 
-                    variant="outline"
-                  >
-                    Quick Add
-                  </Button>
-                </div>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>

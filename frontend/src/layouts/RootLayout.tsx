@@ -266,7 +266,7 @@ export function RootLayout() {
 
           {/* Mobile Search Bar below the header */}
           {isSearchOpen && (
-            <div className="absolute top-full left-0 w-full bg-background border-b border-border px-4 py-3 flex items-center gap-3 z-30 md:hidden animate-in slide-in-from-top-4 duration-200">
+            <div className="absolute top-full left-0 w-full bg-background border-b border-border px-4 py-3 flex items-center gap-3 z-30 xl:hidden animate-in slide-in-from-top-4 duration-200">
               <form onSubmit={handleSearchSubmit} className="relative flex-1">
                 <input
                   type="text"
@@ -305,13 +305,13 @@ export function RootLayout() {
 
 
           {/* Left section: Logo */}
-          <div className="flex items-center gap-2 sm:gap-3 xl:gap-8 shrink min-w-0 pl-0 md:pl-0">
+          <div className="flex items-center gap-2 shrink-0">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2 sm:space-x-3 shrink min-w-0">
-              <div className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 flex items-center justify-center shrink">
-                <img src={logo} alt="Cebu Central Meatshop Logo" className="h-full w-full object-contain shrink" />
+            <Link to="/" className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 flex items-center justify-center shrink-0">
+                <img src={logo} alt="Cebu Central Meatshop Logo" className="h-full w-full object-contain shrink-0" />
               </div>
-              <span className="font-display font-bold text-[13px] sm:text-lg md:text-xl tracking-tight leading-tight block max-w-[110px] sm:max-w-[200px] md:max-w-none truncate sm:whitespace-normal">
+              <span className="block md:hidden lg:block font-display font-bold text-[13px] sm:text-lg lg:text-xl tracking-tight leading-tight max-w-[110px] sm:max-w-[200px] lg:max-w-none truncate sm:whitespace-normal">
                 Cebu Central <br className="sm:hidden" /> Meatshop
               </span>
             </Link>
@@ -325,8 +325,8 @@ export function RootLayout() {
           {/* Right section: Icons (Search, Wishlist, Cart, Profile) */}
           <div className="flex items-center shrink-0 gap-0.5 sm:gap-2">
 
-            {/* Desktop Inline Search Bar (Visible only on md+) */}
-            <form onSubmit={handleSearchSubmit} className="hidden md:flex items-center relative md:w-36 lg:w-48 xl:w-64 mr-1 lg:mr-2">
+            {/* Desktop Inline Search Bar (Visible only on xl+) */}
+            <form onSubmit={handleSearchSubmit} className="hidden xl:flex items-center relative xl:w-64 mr-1 lg:mr-2">
               <div className="relative w-full">
                 <input
                   type="text"
@@ -353,7 +353,7 @@ export function RootLayout() {
             <Tooltip content="Search">
               <button
                 onClick={toggleSearch}
-                className={`h-11 w-11 flex items-center justify-center rounded-md hover:bg-muted text-foreground transition-colors shrink-0 focus:outline-none md:hidden ${isSearchOpen ? 'bg-muted' : ''}`}
+                className={`h-11 w-11 flex items-center justify-center rounded-md hover:bg-muted text-foreground transition-colors shrink-0 focus:outline-none xl:hidden ${isSearchOpen ? 'bg-muted' : ''}`}
                 aria-label="Search"
               >
                 <Search className="h-5 w-5" />
@@ -393,7 +393,7 @@ export function RootLayout() {
             </Tooltip>
 
             {/* Profile */}
-            <Tooltip content="Account" className="hidden md:flex">
+            <Tooltip content="Account" className="flex">
               <div className="h-11 w-11 flex items-center justify-center shrink-0">
                 <SignedIn>
                   <UserDropdown />

@@ -20,6 +20,17 @@ module.exports = {
         sans: ['Inter', 'sans-serif'],
         display: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
+      fontSize: {
+        display: "var(--font-size-display)",
+        h1: "var(--font-size-h1)",
+        h2: "var(--font-size-h2)",
+        h3: "var(--font-size-h3)",
+        h4: "var(--font-size-h4)",
+        "body-lg": "var(--font-size-body-lg)",
+        body: "var(--font-size-body)",
+        "body-sm": "var(--font-size-body-sm)",
+        caption: "var(--font-size-caption)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

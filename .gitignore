@@ -16,6 +16,7 @@ out/
 coverage/
 .eslintcache
 *.tsbuildinfo
+project_context/
 
 # IDEs and Tools
 .vscode/

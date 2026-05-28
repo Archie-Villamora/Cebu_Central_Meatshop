@@ -168,6 +168,22 @@ export function MegaNav() {
     setHoveredTrigger(null);
   }, [location.pathname]);
 
+  // Determine the single active route tab to prevent double highlighting
+  const activeRouteTabId = (() => {
+    const canonicalPaths: Record<string, string> = {
+      "/subscription": "services",
+      "/guarantee": "support"
+    };
+    if (canonicalPaths[location.pathname]) {
+      return canonicalPaths[location.pathname];
+    }
+    return navigationConfig.find(tab => 
+      tab.columns.some(col => 
+        col.links.some(l => location.pathname === l.href.split('#')[0])
+      )
+    )?.id;
+  })();
+
   // Extract groupings from shared config
   const shopGroup = navigationConfig.find((g) => g.id === "shop")!;
   const servicesGroup = navigationConfig.find((g) => g.id === "services")!;
@@ -194,9 +210,7 @@ export function MegaNav() {
       {navigationConfig.map((tab) => {
         const isOpen = activeTab === tab.id;
         const isHovered = hoveredTrigger === tab.id;
-        const isActiveRoute = tab.columns.some((col) =>
-          col.links.some((l) => location.pathname === l.href)
-        );
+        const isActiveRoute = tab.id === activeRouteTabId;
 
         return (
           <div
