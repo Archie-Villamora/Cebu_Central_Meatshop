@@ -312,7 +312,7 @@ export function Shop() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
                 <AnimatePresence mode="popLayout">
                   {filteredProducts.map((product) => (
                     <motion.div

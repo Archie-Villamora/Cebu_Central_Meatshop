@@ -147,7 +147,7 @@ export function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
           {CATEGORIES.map((cat, idx) => (
             <Link key={idx} to={cat.link} className="group relative rounded-xl overflow-hidden aspect-[4/5] block bg-muted">
               <img
@@ -175,7 +175,7 @@ export function Home() {
             <p className="text-muted-foreground">Hand-selected premium cuts, guaranteed to impress at your dining table.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

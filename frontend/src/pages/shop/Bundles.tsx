@@ -112,7 +112,7 @@ export function Bundles() {
         </div>
 
         {/* Bundles Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-8">
           <AnimatePresence mode="popLayout">
             {filteredBundles.map((bundle) => {
               const savings = bundle.originalPrice - bundle.price;

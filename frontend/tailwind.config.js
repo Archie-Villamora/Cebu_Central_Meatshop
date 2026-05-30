@@ -8,14 +8,12 @@ module.exports = {
     './src/**/*.{ts,tsx}',
   ],
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
+      screens: {
+        "3xl": "1600px",
+        "4xl": "1800px",
+        "5xl": "2000px",
+      },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         display: ['"Plus Jakarta Sans"', 'sans-serif'],
