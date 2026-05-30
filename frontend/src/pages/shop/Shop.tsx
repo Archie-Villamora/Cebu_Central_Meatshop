@@ -253,7 +253,7 @@ export function Shop() {
         <div className="flex gap-8 items-start relative">
           
           {/* Desktop Left Sidebar */}
-          <aside className="hidden lg:block w-64 bg-white border border-border p-6 rounded-xl shadow-sm shrink-0">
+          <aside className="hidden lg:block w-64 bg-white border border-border p-6 rounded-xl shadow-sm shrink-0 sticky top-28 self-start">
             {FilterSidebarContent()}
           </aside>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Home as HomeIcon, Search, Heart, ShoppingCart, User, X, ChevronDown, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
@@ -87,6 +87,36 @@ export function RootLayout() {
   useEffect(() => {
     localStorage.setItem("wishlistCount", wishlistCount.toString());
   }, [wishlistCount]);
+
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Always show navbar near the top of the page
+      if (currentScrollY < 50) {
+        setIsHeaderVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+      
+      // Hide on scroll down, show on scroll up
+      if (currentScrollY > lastScrollY.current) {
+        if (!isMenuOpen && !isCartOpen && !isSearchOpen) {
+          setIsHeaderVisible(false);
+        }
+      } else {
+        setIsHeaderVisible(true);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMenuOpen, isCartOpen, isSearchOpen]);
 
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
@@ -261,7 +291,7 @@ export function RootLayout() {
       </Sheet>
 
       {/* Main Top Navigation Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
+      <header className={`sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur transition-transform duration-300 ${isHeaderVisible ? "translate-y-0" : "-translate-y-full"}`}>
         <div className="container mx-auto px-4 md:px-6 h-24 flex items-center justify-between gap-4 relative">
 
           {/* Mobile Search Bar below the header */}
@@ -430,7 +460,7 @@ export function RootLayout() {
           <div className="p-6 border-b border-border flex items-center justify-between bg-white shrink-0">
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-display font-bold text-foreground">Shopping Cart</h2>
+              <SheetTitle className="text-lg font-display font-bold text-foreground">Shopping Cart</SheetTitle>
               <span className="text-xs bg-muted text-muted-foreground font-semibold px-2 py-0.5 rounded-full">
                 {cartCount} {cartCount === 1 ? "item" : "items"}
               </span>
